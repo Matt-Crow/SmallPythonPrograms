@@ -8,7 +8,9 @@ def run():
   deck_size = float(raw_input("Deck size: "))
   draw_chance = 0.0
   test()
-  run()
+  cont = raw_input("Do you wish to continue? y/n")
+  if cont == "y":
+    run()
 
 def draw():
   global draw_chance
