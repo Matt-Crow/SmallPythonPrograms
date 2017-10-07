@@ -4,13 +4,13 @@ def int_input(msg):
     inp = int(inp)
     if inp <= 0:
       print("Please enter a non-negative number")
-      int_input(msg)
+      return int_input(msg)
     else:
       return inp
   
   except:
     print("Please enter a valid non-decimal number")
-    int_input(msg)
+    return int_input(msg)
 
 def run():
   global starting_hand
