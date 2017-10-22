@@ -13,54 +13,53 @@ def perc(num):
         perc(0.041) returns
         "4%", not "4.1%"
     """
-    return str(int(num * 100)) + '%'
+    return str(num * 100) + '%'
 
 def calcWeaponBonus(strength):
-    return strength * 0.5
+    return strength * 0.005
 
 def calcCritMult(strength):
     mult = 1.5
-    mult += 0.04 * strength
+    mult += 0.004 * strength
     if mult > 4.5:
         mult = 4.5
     return mult
-#n/d
-def calcDodgeChance(dexterity):
-    chance = 0 # what base?
-    if chance > 0.75:
-        chance = 0.75
-    return chance
 
-#n/d
 def calcCritChance(dexterity):
-    chance = 0 #what is base?
-    chance += ((0.2002 - 0.0002 * dexterity) * dexterity)
+    chance = 0
+    chance += ((0.002002 - 0.000002 * dexterity) * dexterity)
     if chance > 0.5:
         chance = 0.5
+    return chance
+
+# n/d
+def calcDodgeChance(dexterity):
+    chance = 0
+    chance += ((0.002002 - 0.000002 * dexterity) * dexterity) # guess
+    if chance > 0.75:
+        chance = 0.75
     return chance
 
 #n/d    
 def calcFumblePen(dexterity):
     return
 
-#n/d
 def calcEleBonus(focus):
-    return
+    return focus * 0.005
 
 #n/d. Cap?
 def calcExecuteChance(focus):
     # chance to attack with two weapons at the same time
     chance = 0.098
-    chance += ((0.2002 - 0.0002 * focus) * focus)
+    chance += ((0.002002 - 0.000002 * focus) * focus)
     
     return chance
 
-#n/d
 def calcArmorBonus(vitality):
-    return
+    return vitality * 0.0025
 
 def calcBlockChance(vitality):
-    chance = ((0.2002 - 0.0002 * vitality) * vitality)
+    chance = ((0.002002 - 0.000002 * vitality) * vitality)
     if chance > 0.75:
         chance = 0.75
     return chance
@@ -78,6 +77,10 @@ def displayAllStats(s, d, f, v):
     print("Critical hit multiplier: " + perc(calcCritMult(s)))
     print("Critical hit chance: " + perc(calcCritChance(d)))
     print("Dodge chance: " + perc(calcDodgeChance(d)))
+    print("Fumble penalty: " + "TODO")
+    print("Magic damage bonus: " + perc(calcEleBonus(f)))
+    print("Execute chance: " + perc(calcExecuteChance(f)))
+    print("Armor bonus: " + perc(calcArmorBonus(v)))
     print("Block chance: " + perc(calcBlockChance(v)))
 
 def run():
