@@ -9,9 +9,6 @@ def perc(num):
     Example:
         perc(0.05) returns
         "5%"
-    deletes decimal:
-        perc(0.041) returns
-        "4%", not "4.1%"
     """
     return str(num * 100) + '%'
 
@@ -42,7 +39,7 @@ def calcDodgeChance(dexterity):
 
 #n/d    
 def calcFumblePen(dexterity):
-    return
+    return 0
 
 def calcEleBonus(focus):
     return focus * 0.005
@@ -63,6 +60,42 @@ def calcBlockChance(vitality):
     if chance > 0.75:
         chance = 0.75
     return chance
+
+statFunctions = {
+    "Weapon Bonus": calcWeaponBonus,
+    "Critical Hit Multiplier": calcCritMult,
+    "Critical Hit Chance": calcCritChance,
+    "Dodge Chance": calcDodgeChance,
+    "Fumble Penalty": calcFumblePen,
+    "Elemental Damage Bonus": calcEleBonus,
+    "Execute Chance": calcExecuteChance,
+    "Armor Bonus": calcArmorBonus,
+    "Block Chance": calcBlockChance
+}
+
+#improve
+def calcForValue(functionName, value):
+    statPoints = 0
+    f = statFunctions[functionName]
+    while f(statPoints) < value and statPoints < 1000:
+        statPoints += 5
+    
+    return statPoints
+
+def askStatAndValue():
+    statList = []
+    for stat in statFunctions.keys():
+        statList.append(stat)
+    inp = -1
+    while inp < 0 or inp >= len(statList):
+        for i in range(0, len(statList)):
+            print("#" + str(i) + ": " + statList[i])
+        inp = raw_input("Enter a number:")
+        try:
+            inp = float(inp)
+        except:
+            inp = -1
+    
 
 #n/d
 def displayAllStats(s, d, f, v):
@@ -92,4 +125,6 @@ def run():
     
     displayAllStats(inp[0], inp[1], inp[2], inp[3])
 
-run()
+
+#run()
+askStatAndValue()
