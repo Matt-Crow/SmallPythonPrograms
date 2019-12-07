@@ -9,7 +9,6 @@ that the sum of all dice
 rolled will exactly equal x
 """
 def chanceX(dice, x):
-    print(x)
     # first, set up base cases
     # account for only one die passed
     if not isinstance(dice, list):
@@ -34,18 +33,20 @@ def chanceX(dice, x):
         denom *= die
         max += die
 
-    print("Max is " + str(max))
     if max < x:
         return 0
 
     if len(dice) == 1:
-        if dice[0] >= x:
-            num = 1 # only one face can equal x
+        return 1 / dice[0] # only one face can equal x
 
-    if len(dice) == 2:
-        num = dice[0] + dice[1] - x + 1
-
-    # now, what would be the formula for an arbitrary number of dice?
+    # use recursion for multiple
+    otherDice = dice.copy()
+    lockedIn = otherDice.pop() # removes last die
+    for i in range(1, lockedIn + 1):
+        #vary the value of lockedIn
+        chanceOthers = float(chanceX(otherDice, x - i) * denom) / lockedIn # undo denominator of chanceOthers
+        print("The chance of rolling {} using {}, given {} is {}".format(x, otherDice, i, chanceOthers))
+        num += chanceOthers
 
     if num < 0:
         return 0
@@ -78,12 +79,12 @@ def testAll():
     chanceXPlus(dice, 20)
 
 def testCombos():
-    dice = [4, 6, 8, 10, 20] #might be up to 2 more
+    dice = [4, 6]
     for die1 in dice:
         for die2 in dice:
             for sum in range(1, die1 + die2 + 1):
                 if die1 != die2:
-                    print(str(sum) + " : " + str(chanceXPlus([die1, die2], sum)))
+                    print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
 
 def testChanceX():
     dice = [4, 6, 8, 10, 20] #might be up to 2 more
@@ -93,6 +94,6 @@ def testChanceX():
                 if die1 != die2:
                     print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
 
-testAll()
-#testCombos()
+#testAll()
+testCombos()
 #testChanceX()
