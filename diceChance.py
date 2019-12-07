@@ -26,7 +26,7 @@ def chanceX(dice, x):
 
     # compute the number of permutations
     # this is the cartesian product of each die
-    num = 0
+    chance = 0
     denom = 1
     max = 0
     for die in dice:
@@ -44,14 +44,11 @@ def chanceX(dice, x):
     lockedIn = otherDice.pop() # removes last die
     for i in range(1, lockedIn + 1):
         #vary the value of lockedIn
-        chanceOthers = float(chanceX(otherDice, x - i) * denom) / lockedIn # undo denominator of chanceOthers
-        print("The chance of rolling {} using {}, given {} is {}".format(x, otherDice, i, chanceOthers))
-        num += chanceOthers
+        chanceOthers = chanceX(otherDice, x - i)
+        print("The chance of rolling {} using {}, given {} is {}".format(x, otherDice, i, chanceOthers / lockedIn))
+        chance += chanceOthers / lockedIn
 
-    if num < 0:
-        return 0
-
-    return float(num) / denom
+    return chance
 
 """
 Caclulates the probability
@@ -85,6 +82,8 @@ def testCombos():
             for sum in range(1, die1 + die2 + 1):
                 if die1 != die2:
                     print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
+    print("rolling a d4, a d6, and a d8, the chance of their sum being a 5 is: ")
+    print(chanceX([4, 6, 8], 5))
 
 def testChanceX():
     dice = [4, 6, 8, 10, 20] #might be up to 2 more
