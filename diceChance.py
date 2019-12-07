@@ -13,7 +13,10 @@ def chanceXPlus(dice, x):
     if not isinstance(dice, list):
         dice = [dice]
     for die in dice:
-        print(die)
+        if die < x:
+            chance += 0
+        else:
+            chance += (die - x + 1) / die
     return chance
 
 def testAll():
