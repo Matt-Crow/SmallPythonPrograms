@@ -4,6 +4,55 @@ using a set of dice (d4, d6, d20, etc)
 """
 
 """
+Calculates the probability
+that the sum of all dice
+rolled will exactly equal x
+"""
+def chanceX(dice, x):
+    print(x)
+    # first, set up base cases
+    # account for only one die passed
+    if not isinstance(dice, list):
+        dice = [dice]
+    # each die can be at the minimum 1
+    if x < len(dice):
+        return 0
+
+    """
+    How do I calculate for multiple dice?
+    """
+    # now, how do I calculate this?
+    # let's see if I can determine a formula
+
+
+    # compute the number of permutations
+    # this is the cartesian product of each die
+    num = 0
+    denom = 1
+    max = 0
+    for die in dice:
+        denom *= die
+        max += die
+
+    print("Max is " + str(max))
+    if max < x:
+        return 0
+
+    if len(dice) == 1:
+        if dice[0] >= x:
+            num = 1 # only one face can equal x
+
+    if len(dice) == 2:
+        num = dice[0] + dice[1] - x + 1
+
+    # now, what would be the formula for an arbitrary number of dice?
+
+    if num < 0:
+        return 0
+
+    return float(num) / denom
+
+"""
 Caclulates the probability
 that the sum of all dice rolled
 will be at least x
@@ -12,29 +61,12 @@ def chanceXPlus(dice, x):
     chance = 0
     if not isinstance(dice, list):
         dice = [dice]
-    for die in dice:
-        if die < x:
-            chance += 0
-        else:
-            chance += (die - x + 1) / die
-    """
-    How do I calculate for multiple dice?
-    """
-    # first, compute the number of permutations
-    # this is the cartesian product of each die
-    denom = 1
-    for die in dice:
-        denom *= die
-    print(dice)
-    print("Has " + str(denom) + " permutations")
 
-    num = 0
-    # first, how would I calculate it for 2 dice?
-    if len(dice) == 2:
-        num = dice[0] + dice[1] - x + 1
-        chance = num / denom
-
-    # now, what would be the formula for an arbitrary number of dice?
+    added = 1
+    while added != 0:
+        added = chanceX(dice, x)
+        chance += added
+        x += 1
 
     return chance
 
@@ -53,5 +85,14 @@ def testCombos():
                 if die1 != die2:
                     print(str(sum) + " : " + str(chanceXPlus([die1, die2], sum)))
 
-#testAll()
-testCombos()
+def testChanceX():
+    dice = [4, 6, 8, 10, 20] #might be up to 2 more
+    for die1 in dice:
+        for die2 in dice:
+            for sum in range(1, die1 + die2 + 1):
+                if die1 != die2:
+                    print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
+
+testAll()
+#testCombos()
+#testChanceX()
