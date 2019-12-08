@@ -70,6 +70,19 @@ def chanceXPlus(dice, x):
 
     return chance
 
+"""
+Computes every possible combination
+of terms from set1 and set2
+"""
+def cartesianProduct(set1, set2):
+    pass
+
+"""
+Calculates the chance to roll the given value
+with the given dice, then prints the result.
+
+TODO: make this return an array so it can be sorted
+"""
 def formatChance(dice, rollX, orMore=False):
     rollStr = str(rollX)
     f = chanceX
@@ -80,32 +93,26 @@ def formatChance(dice, rollX, orMore=False):
 
     print("The chance of rolling a {} using the dice {} is {}".format(rollStr, dice, str(int(f(dice, rollX) * 100)) + "%"))
 
+
+
 def testAllSingle():
     dice = [4, 6, 8, 10, 20] #might be up to 2 more
     for die in dice:
         for i in range(1, die + 1):
             formatChance([die], i, False)
-            #print("Chance to roll " + str(i) + " or more using a d" + str(die) + ": " + str(chanceXPlus(die, i)))
 
+"""
+TODO: use cartesianProduct to run all possible combinations,
+then sort them by most to least likely.
+"""
 def testCombos():
     dice = [4, 6]
     for die1 in dice:
         for die2 in dice:
             for sum in range(1, die1 + die2 + 1):
                 if die1 != die2:
-                    print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
-    print("rolling a d4, a d6, and a d8, the chance of their sum being a 5 is: ")
-    print(chanceX([4, 6, 8], 5))
-
-def testChanceX():
-    dice = [4, 6, 8, 10, 20] #might be up to 2 more
-    for die1 in dice:
-        for die2 in dice:
-            for sum in range(1, die1 + die2 + 1):
-                if die1 != die2:
-                    print(str(sum) + " : " + str(chanceX([die1, die2], sum)))
+                    formatChance(dice, sum, True)
 
 if __name__ == "__main__":
     testAllSingle()
-    #testCombos()
-    #testChanceX()
+    testCombos()
