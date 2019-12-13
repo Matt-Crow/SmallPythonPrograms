@@ -14,8 +14,40 @@ class EdgeMinHeap:
             self.a[parent] = self.a[idx]
             self.a[idx] = temp
             idx = parent
-            parent = int(idx / 2)
+            parent = int((idx - 1) / 2)
         self.print()
+
+    def siftDown(self):
+        if len(self.a) == 0:
+            throw Error("Heap is empty, cannot sift down")
+        ret = self.a[0]
+        self.a[0] = self.a[len(self.a) - 1]
+        self.a.pop()
+
+        idx = 0
+        l = 1
+        r = 2
+        while (l < len(self.a) and self.a[l][2] < self.a[idx][2]) or (r < len(self.a) and self.a[r][2] < self.a[idx][2]):
+            self.print()
+            if self.a[l][2] > self.a[r][2]:
+                temp = self.a[r]
+                self.a[r] = self.a[idx]
+                self.a[idx] = temp
+                idx = r
+            else:
+                temp = self.a[l]
+                self.a[l] = self.a[idx]
+                self.a[idx] = temp
+                idx = l
+            l = 2 * idx + 1
+            r = 2 * idx + 1
+
+        self.print()
+
+        return ret
+
+    def isEmpty(self):
+        return len(self.a) == 0
 
     def print(self):
         depth = 1
@@ -35,10 +67,17 @@ class EdgeMinHeap:
 def prims(graph, start):
     minSpanTree = Graph()
     heap = EdgeMinHeap()
+    unvisited = []
+    visited = dict()
 
     minSpanTree.addVertex(start)
+    visited[start] = True
+
     for edge in graph.getAdjEdges(start):
         heap.siftUp(edge[0], edge[1], edge[2])
+        unvisited.append(edge[1])
+
+    # not done
 
     return minSpanTree
 
