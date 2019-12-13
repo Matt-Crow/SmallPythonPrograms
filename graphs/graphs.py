@@ -35,6 +35,14 @@ class Graph:
         if self.hasEdge(start, end):
             return self.edges[start][end]
 
+    def getAdjEdges(self, v):
+        ret = []
+        if v in self.edges.keys():
+            for v2, weight in self.edges[v].items():
+                ret.append([v, v2, weight])
+
+        return ret
+
     def addEdge(self, start, end, weight):
         if not start in self.edges:
             self.edges[start] = dict()
