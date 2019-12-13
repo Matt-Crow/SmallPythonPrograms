@@ -31,6 +31,10 @@ class Graph:
                 self.vertices[i - 1] = temp
                 i -= 1
 
+    def getWeight(self, start, end):
+        if self.hasEdge(start, end):
+            return self.edges[start][end]
+
     def addEdge(self, start, end, weight):
         if not start in self.edges:
             self.edges[start] = dict()
@@ -47,11 +51,19 @@ class Graph:
 
 def graphFromFile(vertexFile, edgeFile):
     g = Graph()
+
     vFile = open(vertexFile)
     for line in vFile:
         g.addVertex(int(line))
         g.print()
+    vFile.close()
 
+    eFile = open(edgeFile)
+    for line in eFile:
+        a = line.strip().split(" ")
+        g.addEdge(int(a[0]), int(a[1]), int(a[2]))
+        g.print()
+    return g
 
 if __name__ == "__main__":
-    graphFromFile("vertices.txt", "")
+    graphFromFile("vertices.txt", "edges.txt")
