@@ -43,6 +43,9 @@ class Graph:
 
         return ret
 
+    def getVertices(self):
+        return self.vertices.copy()
+
     def addEdge(self, start, end, weight):
         if not start in self.edges:
             self.edges[start] = dict()

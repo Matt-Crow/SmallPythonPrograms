@@ -19,7 +19,7 @@ class EdgeMinHeap:
 
     def siftDown(self):
         if len(self.a) == 0:
-            throw Error("Heap is empty, cannot sift down")
+            raise Exception("Heap is empty, cannot sift down")
         ret = self.a[0]
         self.a[0] = self.a[len(self.a) - 1]
         self.a.pop()
@@ -27,9 +27,9 @@ class EdgeMinHeap:
         idx = 0
         l = 1
         r = 2
-        while (l < len(self.a) and self.a[l][2] < self.a[idx][2]) or (r < len(self.a) and self.a[r][2] < self.a[idx][2]):
+        while (0 <= l < len(self.a) and self.a[l][2] < self.a[idx][2]) or (0 <= r < len(self.a) and self.a[r][2] < self.a[idx][2]):
             self.print()
-            if self.a[l][2] > self.a[r][2]:
+            if r < len(self.a) and self.a[l][2] > self.a[r][2]:
                 temp = self.a[r]
                 self.a[r] = self.a[idx]
                 self.a[idx] = temp
@@ -67,17 +67,27 @@ class EdgeMinHeap:
 def prims(graph, start):
     minSpanTree = Graph()
     heap = EdgeMinHeap()
-    unvisited = []
     visited = dict()
+    for vertex in graph.getVertices():
+        visited[vertex] = False
 
     minSpanTree.addVertex(start)
     visited[start] = True
 
     for edge in graph.getAdjEdges(start):
         heap.siftUp(edge[0], edge[1], edge[2])
-        unvisited.append(edge[1])
 
-    # not done
+    done = heap.isEmpty()
+    while not done:
+        top = heap.siftDown()
+        while visited[top[1]] and not heap.isEmpty():
+            top = heap.siftDown()
+        visited[top[1]] = True
+        minSpanTree.addVertex(top[1])
+        minSpanTree.addEdge(top[0], top[1], top[2])
+        for edge in graph.getAdjEdges(top[1]):
+            if not visited[edge[1]]:
+                heap.siftUp(edge[0], edge[1], edge[2])
 
     return minSpanTree
 
