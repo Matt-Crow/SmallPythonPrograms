@@ -91,9 +91,11 @@ def prims(graph, start):
         top = heap.siftDown()
         found = not visited[top[1]] # top.to
         done = heap.isEmpty()
+        heap.print()
         while not found and not done:
             top = heap.siftDown()
             found = not visited[top[1]]
+            heap.print()
             if heap.isEmpty():
                 done = True
 
@@ -103,9 +105,11 @@ def prims(graph, start):
         visited[top[1]] = True
         minSpanTree.addVertex(top[1])
         minSpanTree.addEdge(top[0], top[1], top[2])
+        print("Adding edges adjacent to " + str(top[1]) + " to potential edges")
         for edge in graph.getAdjEdges(top[1]):
             if not visited[edge[1]]:
                 heap.siftUp(edge[0], edge[1], edge[2])
+        heap.print()
 
     return minSpanTree
 
