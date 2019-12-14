@@ -80,8 +80,17 @@ def prims(graph, start):
     done = heap.isEmpty()
     while not done:
         top = heap.siftDown()
-        while visited[top[1]] and not heap.isEmpty():
+        found = not visited[top[1]] # top.to
+        done = heap.isEmpty()
+        while not found and not done:
             top = heap.siftDown()
+            found = not visited[top[1]]
+            if heap.isEmpty():
+                done = True
+
+        if not found:
+            break
+
         visited[top[1]] = True
         minSpanTree.addVertex(top[1])
         minSpanTree.addEdge(top[0], top[1], top[2])
@@ -92,5 +101,9 @@ def prims(graph, start):
     return minSpanTree
 
 if __name__ == "__main__":
-    g = graphFromFile("vertices.txt", "edges.txt")
-    prims(g, 1)
+    g = graphFromFile("vertices.txt", "edges.txt", True)
+    mst = prims(g, 1)
+    print("Original:")
+    g.print()
+    print("Minimum Spanning Tree:")
+    mst.print()

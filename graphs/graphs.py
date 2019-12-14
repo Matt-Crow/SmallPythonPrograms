@@ -46,11 +46,13 @@ class Graph:
     def getVertices(self):
         return self.vertices.copy()
 
-    def addEdge(self, start, end, weight):
+    def addEdge(self, start, end, weight, isSymetric=False):
         if not start in self.edges:
             self.edges[start] = dict()
         if not end in self.edges[start]:
             self.edges[start][end] = weight
+            if isSymetric:
+                self.addEdge(end, start, weight, False)
 
     def print(self):
         print("VERTICES:")
@@ -60,7 +62,7 @@ class Graph:
             for end in self.edges[start].keys():
                 print(str(start) + ", " + str(end) + ": " + str(self.edges[start][end]))
 
-def graphFromFile(vertexFile, edgeFile):
+def graphFromFile(vertexFile, edgeFile, isSymetric=False):
     g = Graph()
 
     vFile = open(vertexFile)
@@ -72,7 +74,7 @@ def graphFromFile(vertexFile, edgeFile):
     eFile = open(edgeFile)
     for line in eFile:
         a = line.strip().split(" ")
-        g.addEdge(int(a[0]), int(a[1]), int(a[2]))
+        g.addEdge(int(a[0]), int(a[1]), int(a[2]), isSymetric)
         g.print()
     return g
 
