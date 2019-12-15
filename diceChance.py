@@ -3,6 +3,8 @@ Calculates the chance of rolling specific numbers or higher
 using a set of dice (d4, d6, d20, etc)
 """
 
+import itertools
+
 """
 Calculates the probability
 that the sum of all dice
@@ -89,19 +91,11 @@ def chanceXPlus(dice, x):
     return chance
 
 """
-Computes every possible combination
-of terms from set1 and set2
+cartesian products the given
+set with itself [power] times
 """
-def cartesianProduct(set1, set2):
-    for item1 in set1:
-        for item2 in set2:
-            if not isinstance(item1, list):
-                item1 = [item1]
-            if not isinstance(item2, list):
-                item2 = [item2]
-            ret = item1.copy()
-            ret.extend(item2)
-            yield ret
+def setPower(set, power):
+    return itertools.product(set, repeat=power)
 
 """
 Calculates the chance to roll the given value
@@ -132,8 +126,6 @@ TODO: use cartesianProduct to run all possible combinations,
 then sort them by most to least likely.
 """
 def testCombos():
-    for cp in cartesianProduct([1, 2], [3,4]):
-        print(cp)
     dice = [4, 6]
     for die1 in dice:
         for die2 in dice:
@@ -158,6 +150,7 @@ def menu():
     2. Add a die to the set
     3. Set the value to calculate the probability of summing to
     4. Compute probabilities for the given set
+    5. Compute cartesian product of standard dice set
     -1. Quit
     """
 
@@ -191,8 +184,12 @@ def menu():
             elif ip == 4:
                 formatChance(dice, val, True)
                 dice = []
+            elif ip == 5:
+                std = [4, 6, 20]
+                for set in setPower(std, 5):
+                    print(set)
         except:
-            print("Invalid input: " + ip)
+            print("Invalid input: " + str(ip))
 
 if __name__ == "__main__":
     menu()
