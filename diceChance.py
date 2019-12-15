@@ -17,6 +17,8 @@ def chanceX(dice, x):
     # first, set up base cases
     # account for only one die passed
     # also accounts for recursive base
+    if isinstance(dice, tuple):
+        dice = list(dice)
     if not isinstance(dice, list):
         dice = [dice]
 
@@ -71,6 +73,8 @@ For example, [4, 6, 10] means a 4 sided die, 6 sided die, and 10 sided die are b
 """
 def chanceXPlus(dice, x):
     chance = 0
+    if isinstance(dice, tuple):
+        dice = list(dice)
     if not isinstance(dice, list):
         dice = [dice]
 
@@ -126,12 +130,17 @@ TODO: use cartesianProduct to run all possible combinations,
 then sort them by most to least likely.
 """
 def testCombos():
-    dice = [4, 6]
-    for die1 in dice:
-        for die2 in dice:
-            for sum in range(1, die1 + die2 + 1):
-                if die1 != die2:
-                    formatChance(dice, sum, True)
+    dice = [4, 6, 8, 10, 20]
+    for diceCount in range(1, len(dice) + 1):
+        for subset in setPower(dice, diceCount):
+            print(type(subset[0]))
+            sum = 0
+            for die in subset:
+                print(die)
+                sum += die
+            for i in range(1, sum + 1):
+                formatChance(subset, i, True)
+
 def testMax():
     dice = [4, 6, 8, 10, 20]
     sum = 0
@@ -188,7 +197,7 @@ def menu():
                 std = [4, 6, 20]
                 for set in setPower(std, 5):
                     print(set)
-        except:
+        except ValueError as err:
             print("Invalid input: " + str(ip))
 
 if __name__ == "__main__":
