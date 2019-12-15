@@ -93,7 +93,15 @@ Computes every possible combination
 of terms from set1 and set2
 """
 def cartesianProduct(set1, set2):
-    pass
+    for item1 in set1:
+        for item2 in set2:
+            if not isinstance(item1, list):
+                item1 = [item1]
+            if not isinstance(item2, list):
+                item2 = [item2]
+            ret = item1.copy()
+            ret.extend(item2)
+            yield ret
 
 """
 Calculates the chance to roll the given value
@@ -124,6 +132,8 @@ TODO: use cartesianProduct to run all possible combinations,
 then sort them by most to least likely.
 """
 def testCombos():
+    for cp in cartesianProduct([1, 2], [3,4]):
+        print(cp)
     dice = [4, 6]
     for die1 in dice:
         for die2 in dice:
