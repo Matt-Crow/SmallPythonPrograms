@@ -1,6 +1,16 @@
 """
 Calculates the chance of rolling specific numbers or higher
 using a set of dice (d4, d6, d20, etc)
+
+This program is currently extreamly inefficient,
+but I have theorized a mathematical, significantly faster solution:
+The chance to roll exactly X using a set of dice S:
+let N = (the number of integer solutions to the plane X = s1 + s2 + s3 + ... + sn
+bounded by 1 <= s <= s_max for each s in S)
+let D = s1 * s2 * s3 * ... * sn
+(the number of integer solutions to an n-dimesional cube, bounded the same as the plane)
+
+chance = N/D.
 """
 
 import itertools
