@@ -9,23 +9,18 @@ Returns the absolute path to the
 file if path is valid.
 """
 def verifyCsv(path):
-    return os.path.abspath(path)
     path = os.path.abspath(path)
     if not os.path.isfile(path):
-        print("nooooooooooo")
         raise ValueError("Argument must be a path to a file.")
-    print(path)
-    try:
-        ext = os.path.splitext(path)
-    except:
-        print("problem")
-        ext = ".csv"
-    print("ext is " + ext)
+    ext = os.path.splitext(path)[1]
     if not ".csv" == ext:
         raise ValueError("Argument must be a path to a csv file.")
     return path
 
-
+"""
+Reads a csv file containing X, Y, and Z coordinates,
+and puts them in a 2-D array for O(1) lookup.
+"""
 def readAs2DArray(inPath):
     verifyCsv(inPath)
 
@@ -63,7 +58,9 @@ def readAs2DArray(inPath):
         for row in matrix:
             while len(row) <= x:
                 row.append(None)
-        matrix[y][x] = point
+        # keep the highest point
+        if matrix[y][x] is None or matrix[y][x][2] < point[2]:
+            matrix[y][x] = point
     return matrix
 
 def getCmdLineArgs():
@@ -79,10 +76,6 @@ def getCmdLineArgs():
     parser.add_argument("sourcefile", metavar="sourcefile", type=verifyCsv, nargs=1, help="the csv file to interpolate")
     args = parser.parse_args()
     return args
-
-def printFile(file):
-    for line in file:
-        print(line)
 
 def printMatrix(twoD):
     for line in twoD:
