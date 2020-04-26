@@ -89,6 +89,8 @@ def printMatrix(twoD):
 """
 Computes the smallest change in x around a point (x, y)
 where the height of the point is unknown.
+
+Not done
 """
 def computeDX(inMatrix, x, y):
     diffInfo = {}
@@ -96,15 +98,27 @@ def computeDX(inMatrix, x, y):
     maxX = len(inMatrix[0])
     left = x - 1
     right = x + 1
-    
+
 
     return diffInfo
 
 
 """
 https://en.wikipedia.org/wiki/Linear_approximation
+
+Inserts a plane at the point (a, b, z),
+with slopes of dz/dx in the x direction,
+and dz/dy in the y direction,
+and returns the z coordinate of the point on the plane above (x, y)
 """
-def tangentPlaneApprox(inMatrix, x, y):
+def tangentPlaneApprox(x, y, a, b, z, dx, dy, dz):
+    xTerm = (float(dz) / dx) * (x - a)
+    yTerm = (float(dz) / dy) * (y - b)
+    approx = int(z + xTerm + yTerm)
+    print("Approx is " + str(approx))
+    return approx
+
+def oldTangentPlaneApprox(inMatrix, x, y):
     maxX = len(inMatrix[0])
     maxY = len(inMatrix)
 
@@ -141,7 +155,9 @@ def tangentPlaneApprox(inMatrix, x, y):
     dy = bottom - top
 
     print(str(dx) + " " + str(dy))
+
     return None
+
 
 def interpolate(inMatrix):
     outMatrix = []
