@@ -90,6 +90,9 @@ def printMatrix(twoD):
 approximate
 the partial derivative dz/dx
 at the point (x, y)
+
+What do I do if there are no points to both its left and right?
+not done
 """
 def computeDzDx(matrix, x, y):
     diffInfo = {}
@@ -117,6 +120,11 @@ def computeDzDx(matrix, x, y):
         diffInfo["dx"] = dx
         diffInfo["dz"] = dz
         diffInfo["dz/dx"] = float(dz) / dx
+        # where the slope is centered
+        diffInfo["x"] = (left + right) / 2
+        diffInfo["z"] = (zLeft + zRight) / 2
+    else:
+        diffInfo = None
 
     return diffInfo
 
@@ -151,22 +159,38 @@ def computeDzDy(matrix, x, y):
         diffInfo["dy"] = dy
         diffInfo["dz"] = dz
         diffInfo["dz/dy"] = float(dz) / dy
+        diffInfo["y"] = (top + bottom) / 2
+        diffInfo["z"] = (zTop + zBottom) / 2
+    else:
+        diffInfo = None
 
     return diffInfo
 
 """
 https://en.wikipedia.org/wiki/Linear_approximation
 
-Inserts a plane at the point (a, b, z),
-with slopes of dz/dx in the x direction,
-and dz/dy in the y direction,
+dzdx and dzdy are from the computeDzDx and computeDzDy functions
+
+Inserts a plane intersection the four points found by dzdx and dzdy,
 and returns the z coordinate of the point on the plane above (x, y)
 """
-def tangentPlaneApprox(x, y, a, b, z, dzdx, dzdy):
-    xTerm = dzdx * (x - a)
-    yTerm = dzdy * (y - b)
-    approx = int(z + xTerm + yTerm)
-    print("Approx is " + str(approx))
+def tangentPlaneApprox(x, y, dzdx, dzdy):
+    xTerm = 0
+    yTerm = 0
+    z = None
+    if dzdx is not None:
+        a = dzdx["x"]
+        xTerm = dzdx["dz/dx"] * (x - a)
+        z = dzdx["z"]
+        print(xTerm)
+    if dzdy is not None:
+        b = dzdy["y"]
+        yTerm = dzdy["dz/dy"] * (y - b)
+        if z is None:
+            z = dzdy["z"]
+        else:
+            z = (z + dzdy["z"]) / 2 # average heights
+    approx = z + xTerm + yTerm
     return approx
 
 """
@@ -179,10 +203,14 @@ def interpolate(inMatrix):
         for colNum in range(0, cols):
             if inMatrix[rowNum][colNum] is None:
                 # perform tangent plane approximation
+                dzdx = computeDzDx(inMatrix, colNum, rowNum)
+                dzdy = computeDzDy(inMatrix, colNum, rowNum)
                 print("Dz/Dx " + str(colNum) + ", " + str(rowNum))
-                print(computeDzDx(inMatrix, colNum, rowNum))
+                print(dzdx)
                 print("Dz/Dy " + str(colNum) + ", " + str(rowNum))
-                print(computeDzDy(inMatrix, colNum, rowNum))
+                print(dzdy)
+                if not (dzdx is None and dzdy is None):
+                    inMatrix[rowNum][colNum] = (colNum, rowNum, tangentPlaneApprox(colNum, rowNum, dzdx, dzdy))
 
 if __name__ == "__main__":
     args = getCmdLineArgs()
