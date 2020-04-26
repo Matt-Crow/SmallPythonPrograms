@@ -169,64 +169,13 @@ def tangentPlaneApprox(x, y, a, b, z, dzdx, dzdy):
     print("Approx is " + str(approx))
     return approx
 
-def fillMatrix(matrix, x=0, y=0):
-    maxX = len(matrix[y])
-    maxY = len(matrix)
-    if x + 1 < maxX:
-        fillMatrix(x + 1, y)
-    if y + 1 < maxY:
-        fillMatrix(x, y + 1)
-    if matrix[y][x] is None:
-        pass
-        matrix[y][x] = (x, y, tangentPlaneApprox(x, y, a, b, z, dzdx, dzdy))
-
-def oldTangentPlaneApprox(inMatrix, x, y):
-    maxX = len(inMatrix[0])
-    maxY = len(inMatrix)
-
-    # compute partial derivatives
-
-    # find the minimum dx and dy
-    left = x - 1 # left endpoint of dx
-    right = x + 1
-    # might be able to ignore dx xor dy?
-    while left >= 0 and inMatrix[y][left] is None:
-        left -= 1
-    if left == -1:
-        pass
-        #raise Exception("Cannot perform plane approximation: there must be a point to the left of x=" + str(x))
-    while right < maxX and inMatrix[y][right] is None:
-        right += 1
-    if right == -1:
-        pass
-        #raise Exception("Cannot perform plane approximation: there must be a point to the right of x=" + str(x))
-    dx = right - left
-
-    top = y - 1
-    bottom = y + 1
-    while top >= 0 and inMatrix[top][x] is None:
-        top -= 1
-    if top == -1:
-        pass
-        #raise Exception("Cannot perform plane approximation: there must be a point above y=" + str(y))
-    while bottom < maxY and inMatrix[bottom][x] is None:
-        bottom += 1
-    if bottom == -1:
-        pass
-        #raise Exception("Cannot perform plane approximation: there must be a point below y=" + str(y))
-    dy = bottom - top
-
-    print(str(dx) + " " + str(dy))
-
-    return None
-
-
+"""
+interpolate z coordinates into inMatrix
+"""
 def interpolate(inMatrix):
-    outMatrix = []
     rows = len(inMatrix)
     cols = 0 if rows == 0 else len(inMatrix[0])
     for rowNum in range(0, rows):
-        newRow = []
         for colNum in range(0, cols):
             if inMatrix[rowNum][colNum] is None:
                 # perform tangent plane approximation
@@ -234,71 +183,6 @@ def interpolate(inMatrix):
                 print(computeDzDx(inMatrix, colNum, rowNum))
                 print("Dz/Dy " + str(colNum) + ", " + str(rowNum))
                 print(computeDzDy(inMatrix, colNum, rowNum))
-                #newRow.append(tangentPlaneApprox(inMatrix, colNum, rowNum))
-            else:
-                newRow.append(inMatrix[rowNum][colNum])
-        outMatrix.append(newRow)
-    return outMatrix
-
-"""
-def interpolate(inputFilePath, outputFilePath):
-    inF = open(inputFilePath, mode="r", encoding="utf-8-sig")
-    outF = open(outputFilePath, mode="w")
-    containsRGB = True
-    error = False
-    try:
-        firstLine = inF.readline().strip()
-        #print(firstLine)
-        containsRGB = "r" in firstLine.lower()
-    except Exception as e:
-        print("Error while reading file: " + str(e))
-
-    if not error:
-        # oh wait, I do need to cache lines to compute partial derivatives across multiple axes
-        fLines = []
-        minX = None
-        minY = None
-        for line in inF:
-            if "x" in line:
-                continue # skip first line if it hasn't been read yet
-            line = line.strip().replace(",", " ") # FME output doesn't contain commas, so make sure all data stays that way
-            if not containsRGB:
-                line = line + " 0 0 0"
-            line = line.split(" ")
-            newline = [];
-            # all lines should contain 6 cells now
-            x = int(float(line[0]))
-            y = int(float(line[1]))
-            z = int(float(line[2]))
-            if minX == None or minX > x:
-                minX = x
-            if minY == None or minY > y:
-                minY = y
-            newline.extend([x, y, z])
-            newline.extend(line[3:6])
-            fLines.append(newline)
-        twoD = []
-        for line in fLines:
-            newX = line[0] - minX
-            newY = line[1] - minY
-            # Make sure there is a spot in the twoD array for the new coordinate
-            while len(twoD) <= newY:
-                newRow = []
-                if len(twoD) is not 0:
-                    for i in range(0, len(twoD[0])):
-                        newRow.append(None)
-                twoD.append(newRow)
-            while len(twoD[0]) <= newX:
-                for row in twoD:
-                    row.append(None)
-            twoD[newY][newX] = line # need to preserve not only z, but color as well
-        printMatrix(twoD)
-
-        # shift everything to (0,0) being the lowest xy coordinate. Use 2D array for O(1) lookup
-        # interpolate, write to output file (don't forget "x y z r g b"!) also, shift everything back to old coordinate system
-    inF.close()
-    outF.close()
-"""
 
 if __name__ == "__main__":
     args = getCmdLineArgs()
@@ -306,6 +190,6 @@ if __name__ == "__main__":
     matrix = readAs2DArray(sfile)
     print("Input matrix")
     printMatrix(matrix)
-    outM = interpolate(matrix)
+    interpolate(matrix)
     print("Output matrix")
-    printMatrix(outM)
+    printMatrix(matrix)
