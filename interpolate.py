@@ -86,6 +86,63 @@ def printMatrix(twoD):
                 print(" " + str(column[2]), end="") #print z-coord
         print("")
 
+"""
+Computes the smallest change in x around a point (x, y)
+where the height of the point is unknown.
+"""
+def computeDX(inMatrix, x, y):
+    diffInfo = {}
+    # make sure there are points to both left and right of x
+    maxX = len(inMatrix[0])
+    left = x - 1
+    right = x + 1
+    
+
+    return diffInfo
+
+
+"""
+https://en.wikipedia.org/wiki/Linear_approximation
+"""
+def tangentPlaneApprox(inMatrix, x, y):
+    maxX = len(inMatrix[0])
+    maxY = len(inMatrix)
+
+    # compute partial derivatives
+
+    # find the minimum dx and dy
+    left = x - 1 # left endpoint of dx
+    right = x + 1
+    # might be able to ignore dx xor dy?
+    while left >= 0 and inMatrix[y][left] is None:
+        left -= 1
+    if left == -1:
+        pass
+        #raise Exception("Cannot perform plane approximation: there must be a point to the left of x=" + str(x))
+    while right < maxX and inMatrix[y][right] is None:
+        right += 1
+    if right == -1:
+        pass
+        #raise Exception("Cannot perform plane approximation: there must be a point to the right of x=" + str(x))
+    dx = right - left
+
+    top = y - 1
+    bottom = y + 1
+    while top >= 0 and inMatrix[top][x] is None:
+        top -= 1
+    if top == -1:
+        pass
+        #raise Exception("Cannot perform plane approximation: there must be a point above y=" + str(y))
+    while bottom < maxY and inMatrix[bottom][x] is None:
+        bottom += 1
+    if bottom == -1:
+        pass
+        #raise Exception("Cannot perform plane approximation: there must be a point below y=" + str(y))
+    dy = bottom - top
+
+    print(str(dx) + " " + str(dy))
+    return None
+
 def interpolate(inMatrix):
     outMatrix = []
     rows = len(inMatrix)
@@ -95,7 +152,7 @@ def interpolate(inMatrix):
         for colNum in range(0, cols):
             if inMatrix[rowNum][colNum] is None:
                 # perform tangent plane approximation
-                newRow.append(None)
+                newRow.append(tangentPlaneApprox(inMatrix, colNum, rowNum))
             else:
                 newRow.append(inMatrix[rowNum][colNum])
         outMatrix.append(newRow)
