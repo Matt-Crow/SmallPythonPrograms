@@ -1,6 +1,71 @@
 import argparse
 import os
 
+"""
+Verifies that the given
+path points to a csv file,
+throwing an exception otherwise.
+Returns the absolute path to the
+file if path is valid.
+"""
+def verifyCsv(path):
+    return os.path.abspath(path)
+    path = os.path.abspath(path)
+    if not os.path.isfile(path):
+        print("nooooooooooo")
+        raise ValueError("Argument must be a path to a file.")
+    print(path)
+    try:
+        ext = os.path.splitext(path)
+    except:
+        print("problem")
+        ext = ".csv"
+    print("ext is " + ext)
+    if not ".csv" == ext:
+        raise ValueError("Argument must be a path to a csv file.")
+    return path
+
+
+def readAs2DArray(inPath):
+    verifyCsv(inPath)
+
+    # First, find the maximum and minimum x and y coordinates,
+    # and cache the points.
+    minX = None
+    minY = None
+    points = []
+    x = 0
+    y = 0
+    z = 0
+    #                            ignore byte order mark
+    with open(inPath, mode="rt", encoding="utf-8-sig") as inFile:
+        headers = inFile.readline() # pop headers off, maybe verify later
+        for line in inFile:
+            line = line.strip().split(",")
+            if len(line) < 3:
+                continue # skip lines with not enough coordinates (such as the last line)
+            x = int(float(line[0])) # int method doesn't accept strings
+            y = int(float(line[1]))
+            z = int(float(line[2]))
+            if minX is None or minX > x:
+                minX = x
+            if minY is None or minY > y:
+                minY = y
+            points.append((x, y, z))
+    # construct the matrix
+    matrix = []
+    for point in points:
+        x = point[0] - minX
+        y = point[1] - minY
+        # make sure there's room for the new point
+        while len(matrix) <= y:
+            matrix.append([])
+        for row in matrix:
+            while len(row) <= x:
+                row.append(None)
+        matrix[y][x] = point
+    return matrix
+
 def getCmdLineArgs():
     desc = """
         Interpolates z coordinates in a csv file.
@@ -10,9 +75,8 @@ def getCmdLineArgs():
         creating a 3-D surface with exactly one point at each
         (x, y) coordinate.
     """
-    parser = argparse.ArgumentParser(description=desc, usage="%(prog)s [sourcefile] [resultfile]")
-    parser.add_argument("sourcefile", metavar="sourcefile", type=argparse.FileType("r"), nargs=1, help="the csv file to interpolate")
-    parser.add_argument("resultfile", metavar="resultfile", type=argparse.FileType("w"), nargs=1, help="the csv file write output to")
+    parser = argparse.ArgumentParser(description=desc, usage="%(prog)s [sourcefile]")
+    parser.add_argument("sourcefile", metavar="sourcefile", type=verifyCsv, nargs=1, help="the csv file to interpolate")
     args = parser.parse_args()
     return args
 
@@ -90,9 +154,5 @@ def interpolate(inputFilePath, outputFilePath):
 if __name__ == "__main__":
     args = getCmdLineArgs()
     sfile = args.sourcefile[0]
-    spath = os.path.abspath(sfile.name)
-    print(spath)
-    rfile = args.resultfile[0]
-    rpath = os.path.abspath(rfile.name)
-    print(rpath)
-    interpolate(spath, rpath)
+    print("Source file is " + sfile)
+    readAs2DArray(sfile)
