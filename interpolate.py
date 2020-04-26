@@ -100,7 +100,7 @@ def computeDzDx(matrix, x, y):
     while left >= 0 and matrix[y][left] is None:
         left -= 1
     if left == -1:
-        left = None # no value to the left, so what do I do?
+        left = None # no value to the left, so what do I do? Maybe try to find two points to the right of x?
 
     while right < maxX and matrix[y][right] is None:
         right += 1
@@ -117,6 +117,40 @@ def computeDzDx(matrix, x, y):
         diffInfo["dx"] = dx
         diffInfo["dz"] = dz
         diffInfo["dz/dx"] = float(dz) / dx
+
+    return diffInfo
+
+"""
+approximate
+the partial derivative dz/dy
+at the point (x, y)
+"""
+def computeDzDy(matrix, x, y):
+    diffInfo = {}
+
+    maxY = len(matrix)
+    top = y - 1
+    bottom = y + 1
+    while top >= 0 and matrix[top][x] is None:
+        top -= 1
+    if top == -1:
+        top = None
+
+    while bottom < maxY and matrix[bottom][x] is None:
+        bottom += 1
+    if bottom == maxY:
+        bottom = None
+
+    if top is not None and bottom is not None:
+        diffInfo["top"] = top
+        diffInfo["bottom"] = bottom
+        dy = bottom - top
+        zTop = matrix[top][x][2]
+        zBottom = matrix[bottom][x][2]
+        dz = zBottom - zTop
+        diffInfo["dy"] = dy
+        diffInfo["dz"] = dz
+        diffInfo["dz/dy"] = float(dz) / dy
 
     return diffInfo
 
@@ -196,7 +230,10 @@ def interpolate(inMatrix):
         for colNum in range(0, cols):
             if inMatrix[rowNum][colNum] is None:
                 # perform tangent plane approximation
+                print("Dz/Dx " + str(colNum) + ", " + str(rowNum))
                 print(computeDzDx(inMatrix, colNum, rowNum))
+                print("Dz/Dy " + str(colNum) + ", " + str(rowNum))
+                print(computeDzDy(inMatrix, colNum, rowNum))
                 #newRow.append(tangentPlaneApprox(inMatrix, colNum, rowNum))
             else:
                 newRow.append(inMatrix[rowNum][colNum])
