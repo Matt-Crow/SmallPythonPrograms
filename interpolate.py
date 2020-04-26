@@ -87,21 +87,38 @@ def printMatrix(twoD):
         print("")
 
 """
-Computes the smallest change in x around a point (x, y)
-where the height of the point is unknown.
-
-Not done
+approximate
+the partial derivative dz/dx
+at the point (x, y)
 """
-def computeDX(inMatrix, x, y):
+def computeDzDx(matrix, x, y):
     diffInfo = {}
-    # make sure there are points to both left and right of x
-    maxX = len(inMatrix[0])
+
+    maxX = len(matrix[0])
     left = x - 1
     right = x + 1
+    while left >= 0 and matrix[y][left] is None:
+        left -= 1
+    if left == -1:
+        left = None # no value to the left, so what do I do?
 
+    while right < maxX and matrix[y][right] is None:
+        right += 1
+    if right == maxX:
+        right = None # no value to the right
+
+    if left is not None and right is not None:
+        diffInfo["left"] = left
+        diffInfo["right"] = right
+        dx = right - left
+        zLeft = matrix[y][left][2]
+        zRight = matrix[y][right][2]
+        dz = zRight - zLeft
+        diffInfo["dx"] = dx
+        diffInfo["dz"] = dz
+        diffInfo["dz/dx"] = float(dz) / dx
 
     return diffInfo
-
 
 """
 https://en.wikipedia.org/wiki/Linear_approximation
@@ -111,12 +128,23 @@ with slopes of dz/dx in the x direction,
 and dz/dy in the y direction,
 and returns the z coordinate of the point on the plane above (x, y)
 """
-def tangentPlaneApprox(x, y, a, b, z, dx, dy, dz):
-    xTerm = (float(dz) / dx) * (x - a)
-    yTerm = (float(dz) / dy) * (y - b)
+def tangentPlaneApprox(x, y, a, b, z, dzdx, dzdy):
+    xTerm = dzdx * (x - a)
+    yTerm = dzdy * (y - b)
     approx = int(z + xTerm + yTerm)
     print("Approx is " + str(approx))
     return approx
+
+def fillMatrix(matrix, x=0, y=0):
+    maxX = len(matrix[y])
+    maxY = len(matrix)
+    if x + 1 < maxX:
+        fillMatrix(x + 1, y)
+    if y + 1 < maxY:
+        fillMatrix(x, y + 1)
+    if matrix[y][x] is None:
+        pass
+        matrix[y][x] = (x, y, tangentPlaneApprox(x, y, a, b, z, dzdx, dzdy))
 
 def oldTangentPlaneApprox(inMatrix, x, y):
     maxX = len(inMatrix[0])
@@ -168,7 +196,8 @@ def interpolate(inMatrix):
         for colNum in range(0, cols):
             if inMatrix[rowNum][colNum] is None:
                 # perform tangent plane approximation
-                newRow.append(tangentPlaneApprox(inMatrix, colNum, rowNum))
+                print(computeDzDx(inMatrix, colNum, rowNum))
+                #newRow.append(tangentPlaneApprox(inMatrix, colNum, rowNum))
             else:
                 newRow.append(inMatrix[rowNum][colNum])
         outMatrix.append(newRow)
