@@ -86,6 +86,22 @@ def printMatrix(twoD):
                 print(" " + str(column[2]), end="") #print z-coord
         print("")
 
+def interpolate(inMatrix):
+    outMatrix = []
+    rows = len(inMatrix)
+    cols = 0 if rows == 0 else len(inMatrix[0])
+    for rowNum in range(0, rows):
+        newRow = []
+        for colNum in range(0, cols):
+            if inMatrix[rowNum][colNum] is None:
+                # perform tangent plane approximation
+                newRow.append(None)
+            else:
+                newRow.append(inMatrix[rowNum][colNum])
+        outMatrix.append(newRow)
+    return outMatrix
+
+"""
 def interpolate(inputFilePath, outputFilePath):
     inF = open(inputFilePath, mode="r", encoding="utf-8-sig")
     outF = open(outputFilePath, mode="w")
@@ -143,9 +159,14 @@ def interpolate(inputFilePath, outputFilePath):
         # interpolate, write to output file (don't forget "x y z r g b"!) also, shift everything back to old coordinate system
     inF.close()
     outF.close()
+"""
 
 if __name__ == "__main__":
     args = getCmdLineArgs()
     sfile = args.sourcefile[0]
-    print("Source file is " + sfile)
-    readAs2DArray(sfile)
+    matrix = readAs2DArray(sfile)
+    print("Input matrix")
+    printMatrix(matrix)
+    outM = interpolate(matrix)
+    print("Output matrix")
+    printMatrix(outM)
