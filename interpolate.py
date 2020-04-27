@@ -1,5 +1,6 @@
 import argparse
 import os
+import math
 
 """
 Verifies that the given
@@ -85,6 +86,44 @@ def printMatrix(twoD):
             else:
                 print(" " + str(column[2]), end="") #print z-coord
         print("")
+
+"""
+Get the three points in a list of points
+whose projection onto the xy plane is
+closest to the point (x, y)
+
+still need to implement
+untested
+use this to find the 3 closest points to the point to estimate,
+convert the 3 points to a plane, and compute partial derivatives based on that.
+When doing planear approximation, let a and b be the distance between (x, y) and
+the center of these 3 closest points.
+
+Might be a better way to do this using the matrix
+"""
+def get3ClosestPoints(allPoints, x, y):
+    points = []
+    dists = []
+    for point in allPoints:
+        dist = math.sqrt(math.pow(point[0] - x, 2), math.pow(point[1] - y, 2))
+        points.append(point)
+        dists.append(dist)
+        # insertion sort
+        i = len(points) - 1
+        while dists[i] < dists[i - 1] && i > 0:
+            # swap
+            temp = points[i]
+            points[i] = points[i - 1]
+            points[i - 1] = temp
+            temp = dists[i]
+            dists[i] = dists[i - 1]
+            dists[i - 1] = temp
+            i--
+        while len(points) > 3:
+            points.pop()
+            dists.pop()
+
+    return points
 
 """
 approximate
