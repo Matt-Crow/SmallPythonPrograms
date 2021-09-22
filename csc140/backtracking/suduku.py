@@ -1,9 +1,7 @@
 import random
 import math
 
-# works for 3x3, but not 9x9 yet
-# keeps trying the same solutions over and over
-
+# works for 3x3 and 9x9
 
 SIZE = 9
 
@@ -31,31 +29,26 @@ def copySuduku(suduku):
     return [[col for col in row] for row in suduku]
 
 def solveSuduku(suduku):
-    return impl(suduku, 1)
+    return impl(suduku, 0, 0)
 
-def impl(suduku, num):
+def impl(suduku, x, y):
     solution = None
-
-    if isFilled(suduku):
+    if y == SIZE: # past last row
         solution = suduku
-    elif count(suduku, num) == SIZE:
-        print(num)
-        printSuduku(suduku)
-        #input()
-        solution = impl(suduku, num + 1)
 
-    # find all places for num
-    row = 0
-    while row < SIZE and solution is None:
-        if num not in suduku[row]:
-            col = 0
-            while col < SIZE and solution is None:
-                if canPlace(num, col, row, suduku):
-                    copy = copySuduku(suduku)
-                    copy[row][col] = num
-                    solution = impl(copy, num)
-                col = col + 1
-        row = row + 1
+    num = 1
+    while num <= SIZE and solution is None:
+        if canPlace(num, x, y, suduku) or suduku[y][x] == num: # cell already set
+            copy = copySuduku(suduku)
+            copy[y][x] = num
+            print()
+            printSuduku(copy)
+            if x + 1 == SIZE: # outside of row
+                solution = impl(copy, 0, y + 1)
+            else:
+                solution = impl(copy, x + 1, y)
+        num = num + 1
+
 
     return solution
 
@@ -101,6 +94,33 @@ def count(suduku, num):
 
 if __name__ == "__main__":
     problem = createSuduku()
+    solveable = [
+        [5, 3, 0,  0, 7, 0,  0, 0, 0],
+        [6, 0, 0,  1, 9, 5,  0, 0, 0],
+        [0, 9, 8,  0, 0, 0,  0, 6, 0],
+
+        [8, 0, 0,  0, 6, 0,  0, 0, 3],
+        [4, 0, 0,  8, 0, 3,  0, 0, 1],
+        [7, 0, 0,  0, 2, 0,  0, 0, 6],
+
+        [0, 6, 0,  0, 0, 0,  2, 8, 0],
+        [0, 0, 0,  4, 1, 9,  0, 0, 5],
+        [0, 0, 0,  0, 8, 0,  0, 7, 9]
+    ]
+    unsolveable = [
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1],
+        [0, 0, 0,  0, 0, 0,  0, 0, 1]
+    ]
+    #problem = unsolveable
     printSuduku(problem)
     solution = solveSuduku(problem)
     if solution is not None:
