@@ -28,25 +28,33 @@ def printSuduku(suduku):
 def copySuduku(suduku):
     return [[col for col in row] for row in suduku]
 
+"""
+Solves the suduku puzzle one cell at a time.
+"""
 def solveSuduku(suduku):
     return impl(suduku, 0, 0)
 
+"""
+backtracks when nothing can be validly placed at (x, y), forcing it to try a
+different value for the previous cell.
+"""
 def impl(suduku, x, y):
     solution = None
-    if y == SIZE: # past last row
+    if y == SIZE: # past last row, so [SIZE - 1][SIZE - 1] has been filled, so the puzzle is solved
         solution = suduku
 
     num = 1
-    while num <= SIZE and solution is None:
-        if canPlace(num, x, y, suduku) or suduku[y][x] == num: # cell already set
+    while num <= SIZE and solution is None: # break on find solution
+        if canPlace(num, x, y, suduku) or suduku[y][x] == num:
+            #                             cell already set. This prevents pre-filled cells from blocking recursive calls
             copy = copySuduku(suduku)
             copy[y][x] = num
-            print()
-            printSuduku(copy)
             if x + 1 == SIZE: # outside of row
-                solution = impl(copy, 0, y + 1)
+                print()
+                printSuduku(copy)
+                solution = impl(copy, 0, y + 1) # next row
             else:
-                solution = impl(copy, x + 1, y)
+                solution = impl(copy, x + 1, y) # next cell
         num = num + 1
 
 
