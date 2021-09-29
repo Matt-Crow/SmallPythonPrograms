@@ -38,6 +38,10 @@ def binarySearch(array, find):
     
     return found
 
+"""
+Primary advantage: performs the smallest number of swaps, so it works will when
+                   it would be expensive to move or copy data
+"""
 def selectSort(array):
     for index in range(0, len(array)):
         #find the smallest element, starting at item

@@ -1,0 +1,37 @@
+/*
+Write the pseudo code for a recursive method called addB2D that takes two binary numbers
+as strings, adds the numbers and returns the result as a decimal integer. For example, addB2D(‘‘101’’,
+‘‘11’’) should return 8 (because the strings are binary representation of 5 and 3, respectively)
+*/
+
+
+
+function addB2D(binStr1, binStr2):
+    if binStr1.length == 0 and binStr2.length == 0:
+        return 0 // base case: lambda
+
+    // at most one of these is true. Replace lambda with "0"
+    if binStr1.length == 0:
+        binStr1 = "0"
+    if binStr2.length == 0:
+        binStr2 = "0"
+
+    // toInt('0') returns 0, toInt('1') returns 1
+    let partialSum =
+        toInt(binStr1[binStr1.length - 1])
+      + toInt(binStr2[binStr2.length - 1])
+
+    // substring(n) returns the first n characters as a new string
+    let recursiveSum = 2 * addB2D(
+        binStr1.substring(binStr1.length - 1),
+        binStr2.substring(binStr2.length - 1)
+    )
+
+    return partialSum + recursiveSum
+
+Trace:
+    binStr1 binStr2 partialSum  recursiveSum    returns
+    101     11      2           2 * 3           8
+    10      1       1           2 * 1           3
+    1       ""      1           2 * 0           1
+    ""      ""      0           0               0
