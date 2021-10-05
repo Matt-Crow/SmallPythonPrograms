@@ -1,0 +1,32 @@
+Part (a):
+def minMaxIter(A, first, last):
+    let min = A[first]
+    let max = A[last]
+    for i from first to last:
+        if A[i] < min:
+            min = A[i]
+        if A[i] > max:
+            max = A[i]
+    return (min, max)
+
+
+Part (b):
+def minMax(A, firstIdx, lastIdx):
+    if firstIdx == lastIdx: // 1 element
+        return (A[firstIdx], A[lastIdx])
+
+    let mid = floor((firstIdx + lastIdx) / 2)
+    (leftMin, leftMax) = minMax(A, firstIdx, mid)
+    (rightMin, rightMax) = minMax(A, mid + 1, rightIdx)
+
+    if leftMin < rightMin:
+        min = leftMin
+    else:
+        min = rightMin
+
+    if leftMax < rightMax:
+        max = rightMax
+    else:
+        max = rightMax
+
+    return (min, max)
