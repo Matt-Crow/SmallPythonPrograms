@@ -35,32 +35,34 @@ def total(a):
 def maxSubArray(a):
     return impl(a, 0, len(a))
 
-# Returns max subarray within a[min:max] (inclusive of min, exclusive of max)
-def impl(a, min, max):
-    #print(min, max)
-    if max - min <= 0:
+# Returns max subarray within a[i:j] (inclusive of i, exclusive of j)
+def impl(a, i, j):
+    #print(i, j)
+    if j - i <= 0:
         return []
-    if max - min == 1:
-        return a[min:max]
+    if j - i == 1:
+        return a[i:j]
 
-    # ignore non-positive elements at the edges
-    while min < max - 2 and a[min] <= 0:
-        min += 1
-    while min < max - 2 and a[max - 1] <= 0:
-        max -= 1
-    bestUnbroken = total(a[min:max])
+    # ignore non-positive elements at the edges WRONG: [1, -999999, 2]
+    # need to check how far we can spread from the center instead
+    while i < j - 1 and a[i] <= 0:
+        i += 1
+    while i < j - 1 and a[j - 1] <= 0:
+        j -= 1
+    #print(a, i, j)
+    bestUnbroken = total(a[i:j])
 
     # break in half
-    mid = int((min + max) / 2)
-    left = impl(a, min, mid)
-    right = impl(a, mid, max)
+    mid = int((i + j) / 2)    
+    left = impl(a, i, mid)
+    right = impl(a, mid, j)
     leftTotal = total(left)
     rightTotal = total(right)
 
     # return either a half, or the total, whichever is max
-    if (leftTotal <= rightTotal and rightTotal <= bestUnbroken) or (rightTotal <= leftTotal and leftTotal <= bestUnbroken):
-        return a[min:max]
-    elif (leftTotal <= bestUnbroken and bestUnbroken <= rightTotal) or (bestUnbroken <= leftTotal and leftTotal <= rightTotal):
+    if (max(leftTotal, rightTotal, bestUnbroken) == bestUnbroken):
+        return a[i:j]
+    elif (max(leftTotal, rightTotal, bestUnbroken) == rightTotal):
         return right
     else:
         return left
