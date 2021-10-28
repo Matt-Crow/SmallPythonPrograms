@@ -1,6 +1,8 @@
 """
 given a file containing a set of characters and the number of occurences of each
 of those characters, find a way of unambiguously encoding a string
+
+This works, but the encoded string is rather long
 """
 
 
@@ -31,7 +33,7 @@ def getCipher(str):
     sortByValue(entries)
 
     cipher = dict()
-    # no
+    # no, encoded is too long
     base = "1"
     for entry in entries:
         cipher[entry] = base
