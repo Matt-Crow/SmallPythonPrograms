@@ -79,6 +79,7 @@ def longestSubsequence(list1, list2):
     """
     for offset in range(1, min(len(list1), len(list2))):
         for i in range(offset, len(list1)): # Theta(N)
+            # professor records which subproblem was used in another array
             matches[i][offset] = max(
                 matches[i - 1][offset - 1],
                 matches[i - 1][offset],
