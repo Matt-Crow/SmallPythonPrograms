@@ -51,7 +51,7 @@ def test():
 def maxWeight(activites):
     s = sorted(activites, key=lambda act : act.end)
     printActs(s)
-    return memoized(s, len(s) - 1)
+    return dynamicWeightSelect(s)
 
 # works
 def recurImpl(acts, lastIdx):
@@ -101,6 +101,39 @@ def memoized(acts, lastIdx, cache=None):
     else:
         cache[lastIdx] = lastChosen
     return cache[lastIdx]
+
+# works!
+def dynamicWeightSelect(acts):
+    if len(acts) == 0:
+        return [] # corner case
+
+    best = [None for act in acts] # best[i] is the best choices for acts[0:i]
+    totals = [None for act in acts]
+
+    best[0] = [acts[0]]
+    totals[0] = acts[0].weight
+
+    newChoice = None
+    newTotal = None
+    for last in range(1, len(acts)):
+        i = last - 1
+        while i >= 0 and not areCompatible(acts[i], acts[last]):
+            i -= 1
+        if i < 0:
+            newChoice = [acts[last]] # none compatible before last
+        else: # compute score if last is chosen
+            newChoice = [act for act in best[i]]
+            newChoice.append(acts[last])
+        newTotal = total(newChoice)
+
+        if newTotal < totals[last - 1]: # better not to choose last
+            best[last] = best[last - 1]
+            totals[last] = totals[last - 1]
+        else:
+            best[last] = newChoice
+            totals[last] = newTotal
+    print(f'Totals: {totals}')
+    return best[len(acts) - 1]
 
 def areCompatible(a1, a2):
     a1BeforeA2 = a1.end <= a2.start
