@@ -18,19 +18,38 @@ import math
 
 
 def test():
-    pts = createRandomPoints(4)
+    pts = createRandomPoints(1000)
+    pts = unduped(pts)
     for p in pts:
-        print(p)
+        pass
+        #print(p)
     closestByBruteForce = solveBruteForce(pts)
     print(f'By brute force, the closest points are {closestByBruteForce[0]} and {closestByBruteForce[1]} ({dist(closestByBruteForce[0], closestByBruteForce[1])})')
     closest = closestPoints(pts);
     print(f'By divide and conquer, the closest points are {closest[0]} and {closest[1]} ({dist(closest[0], closest[1])})')
+    return dist(closestByBruteForce[0], closestByBruteForce[1]) - dist(closest[0], closest[1])
 
 def createRandomPoints(n):
     pts = []
     for i in range(n):
         pts.append((random.randint(0, 10), random.randint(0, 10)))
     return pts
+
+def unduped(pts):
+    # sorted is a stable sort, so this sorts by y, then by x properly
+    # sort first by y-coordinate...
+    sortedByY = sorted(pts, key=lambda point: point[1]) # theta(nlogn) probably
+    # ... then by x-coordinate ...
+    sortedByX = sorted(sortedByY, key=lambda point: point[0]) # theta(nlogn) probably
+    # ... then remove duplicates
+    unduped = [sortedByX[0]]
+    i = 0
+    for j in range(1, len(sortedByX)):
+        if unduped[i][0] != sortedByX[j][0] or unduped[i][1] != sortedByX[j][1]:
+            unduped.append(sortedByX[j])
+            i += 1
+    #print(f'sorted: {unduped}')
+    return unduped
 
 def solveBruteForce(pts):
     a = pts[0]
@@ -40,7 +59,8 @@ def solveBruteForce(pts):
         for p2 in pts:
             temp = dist(p1, p2)
             if p1 is not p2:
-                print(f'{p1} -> {p2} = {temp}')
+                pass
+                #print(f'{p1} -> {p2} = {temp}')
             if temp < d and p1 is not p2:
                 a = p1
                 b = p2
@@ -53,33 +73,10 @@ def dist(a, b):
     return math.sqrt(dx * dx + dy * dy)
 
 def closestPoints(pts):
-    # sort first by y-coordinate...
-    sortedByY = sorted(pts, key=lambda point: point[1]) # theta(nlogn) probably
-    # ... then by x-coordinate ...
-    sortedByX = sorted(sortedByY, key=lambda point: point[0]) # theta(nlogn) probably
-    # ... then remove duplicates
-    unduped = []
-    i = 0
-    j = 1
-    max = len(sortedByX)
-    while j < max:
-        # find end of current range of x
-        while j < max and sortedByX[i][0] == sortedByX[j][0]:
-            j += 1
-        # sortedByX[i...j] exclusive of end all have the same x-coord
-        dupe = False
-        for t1 in range(i, j):
-            dupe = False
-            for t2 in range(t1 + 1, j):
-                if sortedByX[t1][1] == sortedByX[t2][1]:
-                    dupe = True
-                    t2 = j # break
-            if not dupe:
-                unduped.append(sortedByX[t1])
-        i = j
-        j += 1
-    print(f'sorted: {unduped}')
-    return recur(unduped, 0, len(unduped)) # don't use any other len
+    if len(pts) < 2:
+        return None
+
+    return recur(pts, 0, len(pts))
 
 def recur(pts, minIdx, maxIdx):
     if maxIdx - minIdx < 2:
@@ -142,61 +139,12 @@ def recur(pts, minIdx, maxIdx):
         return closestRight
     return closestSplit
 
-def impl(pts):
-    if len(pts) <= 2:
-        return pts
-    # divide into 2 regions
-    minX = None
-    maxX = None
-    for pt in pts:
-        if minX is None or minX > pt[0]:
-            minX = pt[0]
-        if maxX is None or maxX < pt[0]:
-            maxX = pt[0]
-    midX = int((minX + maxX) / 2)
-    left = []
-    right = []
-    for pt in pts:
-        if pt[0] <= midx:
-            left.append(pt)
-        else:
-            right.append(pt)
-
-    # find closest points within each region
-    closestLeft = impl(left)
-    closestRight = impl(right)
-    leftD = dist(closestLeft[0], closestLeft[1])
-    rightD = dist(closestRight[0], closestRight[0])
-    delta = min(leftD, rightD)
-    # find closest pair of points where 1 point is in each region
-    closestSplit = None
-    splitD = None
-    """
-    only bother checking points that are closer to the line than closestLeft
-    and closestRight's pairs are to each other
-    """
-    closeToLineLeft = []
-    for pt1 in left:
-        #      dist to line
-        if midX - pt1[0] < delta:
-            closeToLineLeft.append(pt1)
-    closeToLineRight = []
-    for pt2 in right:
-        if pt2[0] - midX < delta:
-            closeToLineRight.append(pt2)
-
-    # todo: sort pt1 and pt2 by y-coordinate
-    # only bother comparing pts whose addresses are at most delta appart Theta(n)
-    # says to create 2 arrays of pts: one sorted by x, one sorted by y, pass that to function
-    # then merge those arrays or something
-
-    m = min(leftD, rightD, splitD)
-    if m == leftD:
-        return closestLeft
-    if m == rightD:
-        return closestRight
-    return closestSplit
-
-
 if __name__ == "__main__":
-    test()
+    ret = 0
+    i = 1
+    while ret == 0 and i <= 100:
+        ret = test()
+        msg = 'succeeded' if ret is not 0 else 'failed'
+        print(f'Test #{i} {msg}')
+        i += 1
+    #test()
