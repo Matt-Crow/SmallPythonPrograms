@@ -1,0 +1,13 @@
+TCP_SERVER_NAME = "localhost"
+TCP_SERVER_PORT = 5000
+TCP_SERVER_ADDR = (TCP_SERVER_NAME, TCP_SERVER_PORT)
+
+UDP_SERVER_NAME = "localhost"
+UDP_SERVER_PORT = 5001
+UDP_SERVER_ADDR = (UDP_SERVER_NAME, UDP_SERVER_PORT)
+
+BUFFER_SIZE = 4096
+END = "END"
+
+def formatAddr(addr):
+    return f'{addr[0]}:{addr[1]}'
