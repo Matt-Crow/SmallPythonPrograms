@@ -9,7 +9,7 @@ from typing import Callable
 
 
 def read_csv(path: str) -> list[dict]:
-    with open(path) as f:
+    with open(path, errors="replace") as f:
         reader = csv.DictReader(f)
         return [record for record in reader]
 
@@ -21,7 +21,7 @@ def get_primary_keys(objs: list[dict]) -> list[str]:
         values = (obj[key] for obj in objs)
         unique_values = set(values)
         key_to_total_unique_values[key] = len(unique_values)
-    return [key for key, total_unique_values in key_to_total_unique_values if total_unique_values == total_records]
+    return [key for key, total_unique_values in key_to_total_unique_values.items() if total_unique_values == total_records]
 
 
 def compare(old_objs: list[dict], new_objs: list[dict], get_key: Callable[[dict], str]):
@@ -51,3 +51,10 @@ def compare(old_objs: list[dict], new_objs: list[dict], get_key: Callable[[dict]
             new_value = new_obj[key]
             if old_value != new_value:
                 print(f"{pk} [{old_value}] != [{new_value}]")
+
+
+# test code rm later
+old_csv = read_csv("C:\\Users\\MCrow\\Downloads\\old.csv")
+new_csv = read_csv("C:\\Users\\MCrow\\Downloads\\new.csv")
+
+compare(old_csv, new_csv, lambda x: x["Fac_Type"] + x["name"])
