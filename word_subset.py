@@ -8,7 +8,7 @@ Prints all words which can be made using the letters in a given word.
 
 def print_subwords(prefix: str, other_letters: str, all_words: set[str]):
     # base case: exits if we have no other letters left to try
-    for other_letter in other_letters:
+    for other_letter in set(other_letters): # use set to remove duplicates
         maybe_word = prefix + other_letter
         if maybe_word in all_words:
             print(maybe_word)
